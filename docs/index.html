@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SereneDB vs Qdrant — Vector Search Benchmark</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>SereneDB vs Qdrant — vector search benchmark</h1>
+    <p class="lede">
+      Head-to-head ANN comparison on the Yandex Text-to-Image dataset: SereneDB's
+      IVF index (optionally quantized) against Qdrant's HNSW index, same base
+      vectors, queries, and ground truth.
+    </p>
+    <p id="meta-line">Loading run metadata…</p>
+  </header>
+
+  <details class="caveats">
+    <summary>How to read these charts</summary>
+    <ul>
+      <li><strong>Different algorithms, different knobs.</strong> SereneDB is
+        IVF (+ optional scalar/product/RaBitQ quantization), Qdrant is HNSW.
+        The search-effort knob swept per engine is <code>nprobe</code> for
+        SereneDB and <code>hnsw_ef</code> for Qdrant — they aren't the same
+        unit, so compare the recall-vs-QPS curve, not points at equal effort.</li>
+      <li><strong>"Best per recall band."</strong> Each point/bar is the
+        highest-QPS configuration (across every quantization, cell count,
+        segment-merge policy, and effort knob measured) whose achieved
+        recall@10 falls in that band — ties broken by lower p50 latency. Bands
+        are 0.05-wide up to 0.95 recall, then 0.01-wide above it, since that's
+        where the two engines separate.</li>
+      <li><strong>QPS is closed-loop at 32 concurrent clients</strong> — each
+        connection fires its next query as soon as the previous one returns,
+        same protocol for both engines.</li>
+      <li><strong>Build time and index size are shown per engine, not
+        head-to-head.</strong> SereneDB and Qdrant build fundamentally
+        different structures (IVF cells vs. an HNSW graph) from different
+        knobs, so a single bar-for-bar comparison would imply an equivalence
+        that isn't there. Each engine gets its own panel instead.</li>
+      <li><strong>SereneDB panels are pinned at <code>nlist_factor=2</code></strong>
+        (6,325 IVF cells for 10M rows) and show <code>compact</code> vs.
+        <code>no-compact</code> per quantizer — <code>no-compact</code> skips
+        the background segment-merge after loading, so it's faster to build
+        and smaller on disk but typically slower to search.
+        RaBitQ was only swept at <code>nlist_factor=1</code> in this run, so
+        it doesn't appear here.</li>
+      <li><strong>SereneDB's index size includes the base-table columnstore
+        copy</strong> of the vectors (SereneDB indexes a table it also
+        stores; Qdrant's index is index-only) — keep that in mind when
+        eyeballing the two engines' panels side by side.</li>
+    </ul>
+  </details>
+
+  <section class="chart-section" id="section-recall-qps">
+    <h2>Recall vs. QPS</h2>
+    <p class="desc">
+      For each recall@10 band, the best achievable query throughput at 32
+      concurrent clients. Y-axis is log-scaled — at high recall, QPS drops by
+      an order of magnitude for both engines.
+    </p>
+    <div class="chart-card">
+      <canvas id="chart-recall-qps" role="img" aria-label="Line chart of QPS versus recall at 10, one line per engine"></canvas>
+    </div>
+    <details class="data-table">
+      <summary>Show data table</summary>
+      <table id="table-recall-qps">
+        <caption>Winning configuration per recall band, both engines.</caption>
+      </table>
+    </details>
+  </section>
+
+  <section class="chart-section" id="section-build-time">
+    <h2>Build time</h2>
+    <p class="desc">
+      Time to a queryable index, shown separately per engine (see caveat
+      above on why these aren't overlaid).
+    </p>
+    <div class="panel-grid">
+      <div>
+        <h3>SereneDB — by quantizer</h3>
+        <p class="desc">
+          Load + <code>CREATE INDEX</code>, plus the final
+          <code>VACUUM (COMPACT_TABLE)</code> merge for the
+          <code>compact</code> series. <code>nlist_factor=2</code> (6,325 cells).
+        </p>
+        <div class="chart-card">
+          <canvas id="chart-build-time-serenedb" role="img" aria-label="Bar chart of SereneDB build time in seconds by quantizer, compact versus no-compact"></canvas>
+        </div>
+        <details class="data-table">
+          <summary>Show data table</summary>
+          <table id="table-build-time-serenedb">
+            <caption>SereneDB build time (seconds) by quantizer and segment-merge policy.</caption>
+          </table>
+        </details>
+      </div>
+      <div>
+        <h3>Qdrant — by (m, ef_construct)</h3>
+        <p class="desc">
+          HNSW graph construction time; full precision vs. scalar quantization.
+        </p>
+        <div class="chart-card">
+          <canvas id="chart-build-time-qdrant" role="img" aria-label="Bar chart of Qdrant build time in seconds by HNSW m and ef_construct, full precision versus scalar quantization"></canvas>
+        </div>
+        <details class="data-table">
+          <summary>Show data table</summary>
+          <table id="table-build-time-qdrant">
+            <caption>Qdrant build time (seconds) by (m, ef_construct, quant).</caption>
+          </table>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="chart-section" id="section-index-size">
+    <h2>Index size</h2>
+    <p class="desc">
+      On-disk footprint, shown separately per engine.
+    </p>
+    <div class="panel-grid">
+      <div>
+        <h3>SereneDB — by quantizer</h3>
+        <p class="desc">
+          Includes the base-table columnstore copy of the vectors.
+          <code>nlist_factor=2</code> (6,325 cells).
+        </p>
+        <div class="chart-card">
+          <canvas id="chart-index-size-serenedb" role="img" aria-label="Bar chart of SereneDB index size in megabytes by quantizer, compact versus no-compact"></canvas>
+        </div>
+        <details class="data-table">
+          <summary>Show data table</summary>
+          <table id="table-index-size-serenedb">
+            <caption>SereneDB index size (MB) by quantizer and segment-merge policy.</caption>
+          </table>
+        </details>
+      </div>
+      <div>
+        <h3>Qdrant — by (m, ef_construct)</h3>
+        <p class="desc">
+          Index-only footprint; full precision vs. scalar quantization.
+        </p>
+        <div class="chart-card">
+          <canvas id="chart-index-size-qdrant" role="img" aria-label="Bar chart of Qdrant index size in megabytes by HNSW m and ef_construct, full precision versus scalar quantization"></canvas>
+        </div>
+        <details class="data-table">
+          <summary>Show data table</summary>
+          <table id="table-index-size-qdrant">
+            <caption>Qdrant index size (MB) by (m, ef_construct, quant).</caption>
+          </table>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Data generated by <code>scripts/generate_pages_data.py</code> from
+    <code>results/serenedb/summary.csv</code> and
+    <code>results/qdrant/qdrant_tuning_all.csv</code>. See the
+    <a href="https://github.com/serenedb/vector-search-benchmark">repo README</a>
+    for the full benchmark methodology.
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

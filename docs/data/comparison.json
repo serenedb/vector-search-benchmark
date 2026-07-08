@@ -1,0 +1,451 @@
+{
+  "meta": {
+    "dataset": "t2i-10000000",
+    "nb": 10000000,
+    "dim": 200,
+    "k": 10,
+    "clients": 32
+  },
+  "recall_qps": {
+    "serenedb": [
+      {
+        "band": "0.55-0.60",
+        "recall": 0.5518,
+        "qps": 3890.4,
+        "p50_ms": 6.612,
+        "p95_ms": 13.902,
+        "config": "pq/nlist=3162/settle=compact/np=16/rr=2"
+      },
+      {
+        "band": "0.60-0.65",
+        "recall": 0.6044,
+        "qps": 3814.6,
+        "p50_ms": 6.918,
+        "p95_ms": 13.803,
+        "config": "pq/nlist=6325/settle=compact/np=32/rr=2"
+      },
+      {
+        "band": "0.65-0.70",
+        "recall": 0.6628,
+        "qps": 3807.8,
+        "p50_ms": 6.918,
+        "p95_ms": 14.545,
+        "config": "pq/nlist=3162/settle=compact/np=16/rr=4"
+      },
+      {
+        "band": "0.70-0.75",
+        "recall": 0.7094,
+        "qps": 3753.1,
+        "p50_ms": 7.226,
+        "p95_ms": 13.438,
+        "config": "pq/nlist=3162/settle=compact/np=32/rr=4"
+      },
+      {
+        "band": "0.75-0.80",
+        "recall": 0.7978,
+        "qps": 3693.9,
+        "p50_ms": 7.182,
+        "p95_ms": 13.76,
+        "config": "pq/nlist=6325/settle=compact/np=32/rr=8"
+      },
+      {
+        "band": "0.80-0.85",
+        "recall": 0.8213,
+        "qps": 3867.7,
+        "p50_ms": 7.102,
+        "p95_ms": 12.292,
+        "config": "sq8/nlist=3162/settle=compact/np=16/rr=4"
+      },
+      {
+        "band": "0.85-0.90",
+        "recall": 0.8705,
+        "qps": 3724.8,
+        "p50_ms": 6.977,
+        "p95_ms": 12.992,
+        "config": "sq8/nlist=6325/settle=compact/np=32/rr=2"
+      },
+      {
+        "band": "0.90-0.95",
+        "recall": 0.9059,
+        "qps": 3610.2,
+        "p50_ms": 7.108,
+        "p95_ms": 13.522,
+        "config": "sq8/nlist=12649/settle=compact/np=63/rr=2"
+      },
+      {
+        "band": "0.95-0.96",
+        "recall": 0.9539,
+        "qps": 2454.9,
+        "p50_ms": 10.591,
+        "p95_ms": 17.053,
+        "config": "sq4/nlist=25298/settle=compact/np=253/rr=16"
+      },
+      {
+        "band": "0.96-0.97",
+        "recall": 0.9661,
+        "qps": 3153.2,
+        "p50_ms": 8.682,
+        "p95_ms": 13.673,
+        "config": "sq8/nlist=25298/settle=compact/np=253/rr=2"
+      },
+      {
+        "band": "0.97-0.98",
+        "recall": 0.9775,
+        "qps": 2171.4,
+        "p50_ms": 12.45,
+        "p95_ms": 18.333,
+        "config": "sq8/nlist=12649/settle=compact/np=253/rr=4"
+      },
+      {
+        "band": "0.98-0.99",
+        "recall": 0.9864,
+        "qps": 2119.8,
+        "p50_ms": 12.675,
+        "p95_ms": 19.003,
+        "config": "sq8/nlist=25298/settle=compact/np=506/rr=2"
+      },
+      {
+        "band": "0.99-1.00",
+        "recall": 0.9903,
+        "qps": 1293.8,
+        "p50_ms": 22.139,
+        "p95_ms": 29.72,
+        "config": "sq8/nlist=12649/settle=compact/np=506/rr=2"
+      }
+    ],
+    "qdrant": [
+      {
+        "band": "0.55-0.60",
+        "recall": 0.5888,
+        "qps": 1895.8,
+        "p50_ms": 11.611,
+        "p95_ms": 35.039,
+        "config": "m=16/efc=200/quant=scalar/os=1.0/ef=8"
+      },
+      {
+        "band": "0.60-0.65",
+        "recall": 0.6475,
+        "qps": 1942.8,
+        "p50_ms": 11.422,
+        "p95_ms": 33.75,
+        "config": "m=16/efc=100/quant=scalar/os=1.0/ef=16"
+      },
+      {
+        "band": "0.65-0.70",
+        "recall": 0.6849,
+        "qps": 1888.1,
+        "p50_ms": 12.269,
+        "p95_ms": 33.789,
+        "config": "m=16/efc=100/quant=scalar/os=2.0/ef=16"
+      },
+      {
+        "band": "0.70-0.75",
+        "recall": 0.7194,
+        "qps": 1903.9,
+        "p50_ms": 12.167,
+        "p95_ms": 32.129,
+        "config": "m=16/efc=200/quant=none/os=/ef=16"
+      },
+      {
+        "band": "0.75-0.80",
+        "recall": 0.7525,
+        "qps": 1919.2,
+        "p50_ms": 12.323,
+        "p95_ms": 33.12,
+        "config": "m=16/efc=100/quant=scalar/os=1.0/ef=32"
+      },
+      {
+        "band": "0.80-0.85",
+        "recall": 0.8176,
+        "qps": 1909.6,
+        "p50_ms": 11.304,
+        "p95_ms": 34.458,
+        "config": "m=16/efc=200/quant=none/os=/ef=32"
+      },
+      {
+        "band": "0.85-0.90",
+        "recall": 0.8911,
+        "qps": 1945.6,
+        "p50_ms": 12.333,
+        "p95_ms": 33.032,
+        "config": "m=16/efc=200/quant=none/os=/ef=64"
+      },
+      {
+        "band": "0.90-0.95",
+        "recall": 0.904,
+        "qps": 1868.6,
+        "p50_ms": 12.931,
+        "p95_ms": 34.838,
+        "config": "m=32/efc=200/quant=scalar/os=1.0/ef=64"
+      },
+      {
+        "band": "0.95-0.96",
+        "recall": 0.9515,
+        "qps": 1778.2,
+        "p50_ms": 13.165,
+        "p95_ms": 36.62,
+        "config": "m=64/efc=200/quant=scalar/os=2.0/ef=128"
+      },
+      {
+        "band": "0.96-0.97",
+        "recall": 0.9638,
+        "qps": 1815.9,
+        "p50_ms": 13.114,
+        "p95_ms": 36.833,
+        "config": "m=64/efc=100/quant=scalar/os=1.0/ef=256"
+      },
+      {
+        "band": "0.97-0.98",
+        "recall": 0.9719,
+        "qps": 1779.0,
+        "p50_ms": 12.815,
+        "p95_ms": 39.699,
+        "config": "m=32/efc=200/quant=scalar/os=2.0/ef=256"
+      },
+      {
+        "band": "0.98-0.99",
+        "recall": 0.9807,
+        "qps": 1696.9,
+        "p50_ms": 13.819,
+        "p95_ms": 41.021,
+        "config": "m=64/efc=100/quant=scalar/os=4.0/ef=512"
+      },
+      {
+        "band": "0.99-1.00",
+        "recall": 0.9905,
+        "qps": 1617.0,
+        "p50_ms": 14.707,
+        "p95_ms": 39.864,
+        "config": "m=16/efc=200/quant=scalar/os=2.0/ef=1024"
+      }
+    ]
+  },
+  "build_time": {
+    "serenedb_by_quant": [
+      {
+        "quant": "sq8",
+        "settle": "compact",
+        "nlist": 6325,
+        "build_s": 378.4
+      },
+      {
+        "quant": "sq8",
+        "settle": "no-compact",
+        "nlist": 6325,
+        "build_s": 161.1
+      },
+      {
+        "quant": "sq4",
+        "settle": "compact",
+        "nlist": 6325,
+        "build_s": 375.2
+      },
+      {
+        "quant": "sq4",
+        "settle": "no-compact",
+        "nlist": 6325,
+        "build_s": 161.6
+      },
+      {
+        "quant": "pq",
+        "settle": "compact",
+        "nlist": 6325,
+        "build_s": 467.4
+      },
+      {
+        "quant": "pq",
+        "settle": "no-compact",
+        "nlist": 6325,
+        "build_s": 249.4
+      }
+    ],
+    "qdrant_by_config": [
+      {
+        "m": 16,
+        "ef_construct": 100,
+        "quant": "none",
+        "build_s": 653.5
+      },
+      {
+        "m": 16,
+        "ef_construct": 100,
+        "quant": "scalar",
+        "build_s": 488.1
+      },
+      {
+        "m": 16,
+        "ef_construct": 200,
+        "quant": "none",
+        "build_s": 781.1
+      },
+      {
+        "m": 16,
+        "ef_construct": 200,
+        "quant": "scalar",
+        "build_s": 653.8
+      },
+      {
+        "m": 32,
+        "ef_construct": 100,
+        "quant": "none",
+        "build_s": 653.6
+      },
+      {
+        "m": 32,
+        "ef_construct": 100,
+        "quant": "scalar",
+        "build_s": 519.7
+      },
+      {
+        "m": 32,
+        "ef_construct": 200,
+        "quant": "none",
+        "build_s": 1014.5
+      },
+      {
+        "m": 32,
+        "ef_construct": 200,
+        "quant": "scalar",
+        "build_s": 666.9
+      },
+      {
+        "m": 64,
+        "ef_construct": 100,
+        "quant": "none",
+        "build_s": 670.9
+      },
+      {
+        "m": 64,
+        "ef_construct": 100,
+        "quant": "scalar",
+        "build_s": 503.6
+      },
+      {
+        "m": 64,
+        "ef_construct": 200,
+        "quant": "none",
+        "build_s": 969.2
+      },
+      {
+        "m": 64,
+        "ef_construct": 200,
+        "quant": "scalar",
+        "build_s": 669.9
+      }
+    ]
+  },
+  "index_size": {
+    "serenedb_by_quant": [
+      {
+        "quant": "sq8",
+        "settle": "compact",
+        "nlist": 6325,
+        "index_mb": 25453.5
+      },
+      {
+        "quant": "sq8",
+        "settle": "no-compact",
+        "nlist": 6325,
+        "index_mb": 16247.6
+      },
+      {
+        "quant": "sq4",
+        "settle": "compact",
+        "nlist": 6325,
+        "index_mb": 23453.5
+      },
+      {
+        "quant": "sq4",
+        "settle": "no-compact",
+        "nlist": 6325,
+        "index_mb": 15247.6
+      },
+      {
+        "quant": "pq",
+        "settle": "compact",
+        "nlist": 6325,
+        "index_mb": 22504.1
+      },
+      {
+        "quant": "pq",
+        "settle": "no-compact",
+        "nlist": 6325,
+        "index_mb": 14793.0
+      }
+    ],
+    "qdrant_by_config": [
+      {
+        "m": 16,
+        "ef_construct": 100,
+        "quant": "none",
+        "index_mb": 9287.4
+      },
+      {
+        "m": 16,
+        "ef_construct": 100,
+        "quant": "scalar",
+        "index_mb": 15318.2
+      },
+      {
+        "m": 16,
+        "ef_construct": 200,
+        "quant": "none",
+        "index_mb": 9406.3
+      },
+      {
+        "m": 16,
+        "ef_construct": 200,
+        "quant": "scalar",
+        "index_mb": 14046.6
+      },
+      {
+        "m": 32,
+        "ef_construct": 100,
+        "quant": "none",
+        "index_mb": 9481.2
+      },
+      {
+        "m": 32,
+        "ef_construct": 100,
+        "quant": "scalar",
+        "index_mb": 12517.4
+      },
+      {
+        "m": 32,
+        "ef_construct": 200,
+        "quant": "none",
+        "index_mb": 9566.5
+      },
+      {
+        "m": 32,
+        "ef_construct": 200,
+        "quant": "scalar",
+        "index_mb": 11646.9
+      },
+      {
+        "m": 64,
+        "ef_construct": 100,
+        "quant": "none",
+        "index_mb": 13717.3
+      },
+      {
+        "m": 64,
+        "ef_construct": 100,
+        "quant": "scalar",
+        "index_mb": 11561.7
+      },
+      {
+        "m": 64,
+        "ef_construct": 200,
+        "quant": "none",
+        "index_mb": 12427.3
+      },
+      {
+        "m": 64,
+        "ef_construct": 200,
+        "quant": "scalar",
+        "index_mb": 11767.2
+      }
+    ]
+  }
+}

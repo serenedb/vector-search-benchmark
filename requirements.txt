@@ -1,0 +1,8 @@
+psycopg[binary]>=3.2
+numpy>=1.24
+pyarrow>=14.0
+# optional: only needed to upload vectors to a HuggingFace dataset (--source hf without --hf-uri)
+# huggingface_hub>=0.23
+# optional: cross-engine comparison (compare.py). The ES client MUST match the ES server major (8.x).
+# qdrant-client
+# elasticsearch>=8.15,<9

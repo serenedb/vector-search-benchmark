@@ -1,0 +1,200 @@
+:root {
+  --surface-1: #fcfcfb;
+  --page: #f9f9f7;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --gridline: #e1e0d9;
+  --baseline: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.10);
+  --series-serenedb: #2a78d6;
+  --series-qdrant: #1baf7a;
+  --series-serenedb-light: color-mix(in srgb, #2a78d6 42%, #fcfcfb);
+  --series-qdrant-light: color-mix(in srgb, #1baf7a 42%, #fcfcfb);
+  --code-bg: #f0efec;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-1: #1a1a19;
+    --page: #0d0d0d;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --gridline: #2c2c2a;
+    --baseline: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --series-serenedb: #3987e5;
+    --series-qdrant: #199e70;
+    --series-serenedb-light: color-mix(in srgb, #3987e5 45%, #1a1a19);
+    --series-qdrant-light: color-mix(in srgb, #199e70 45%, #1a1a19);
+    --code-bg: #26261f;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  margin: 0 0 8px;
+}
+
+header p.lede {
+  color: var(--text-secondary);
+  margin: 0 0 4px;
+  max-width: 70ch;
+}
+
+#meta-line {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 12px 0 0;
+}
+
+.caveats {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.caveats summary {
+  cursor: pointer;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.caveats ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+
+section.chart-section {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+section.chart-section h2 {
+  font-size: 1.2rem;
+  margin: 0 0 6px;
+}
+
+section.chart-section p.desc {
+  color: var(--text-secondary);
+  margin: 0 0 18px;
+  max-width: 68ch;
+}
+
+.chart-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.chart-card canvas {
+  max-height: 340px;
+}
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+@media (max-width: 720px) {
+  .panel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel-grid > div h3 {
+  font-size: 0.95rem;
+  margin: 0 0 4px;
+}
+
+.panel-grid > div p.desc {
+  font-size: 0.85rem;
+  margin: 0 0 12px;
+}
+
+details.data-table {
+  margin-top: 14px;
+}
+
+details.data-table summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.82rem;
+}
+
+table caption {
+  text-align: left;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+th, td {
+  text-align: right;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--gridline);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+th:first-child, td:first-child,
+th:nth-child(2), td:nth-child(2) {
+  text-align: left;
+  font-variant-numeric: normal;
+  white-space: normal;
+}
+
+th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+code {
+  background: var(--code-bg);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+footer {
+  margin-top: 56px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+footer a {
+  color: inherit;
+}
