@@ -18,12 +18,12 @@ function fmtInt(n) {
   return Math.round(n).toLocaleString();
 }
 
-// Only label "clean" log-scale ticks (1/2/5 x 10^n) so the axis doesn't fill
-// with every minor gridline value.
+// Only label "clean" log-scale ticks (1/2/4/5 x 10^n) so the axis doesn't
+// fill with every minor gridline value.
 function niceLogTick(v) {
   const exp = Math.floor(Math.log10(v) + 1e-9);
   const base = Math.round((v / Math.pow(10, exp)) * 10) / 10;
-  return [1, 2, 5].includes(base) ? fmtInt(v) : null;
+  return [1, 2, 4, 5].includes(base) ? fmtInt(v) : null;
 }
 
 // Pick a "nice" (1/2/5 x 10^n) gridline step and a max that's an exact
