@@ -26,6 +26,22 @@ function niceLogTick(v) {
   return [1, 2, 5].includes(base) ? fmtInt(v) : null;
 }
 
+// Pick a "nice" (1/2/5 x 10^n) gridline step and a max that's an exact
+// multiple of it, with a little headroom over the raw data max. Two charts
+// given the *same* raw value here get the *same* {max, step} back, so their
+// y-axes carry identical gridlines at identical positions -- not just the
+// same range, but the same horizontal lines -- letting you compare bar
+// heights across the two charts directly instead of cross-checking numbers.
+function niceAxisScale(value, targetTicks = 6) {
+  const roughStep = (value * 1.08) / targetTicks;
+  const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
+  const residual = roughStep / magnitude;
+  const niceResidual = residual > 5 ? 10 : residual > 2 ? 5 : residual > 1 ? 2 : 1;
+  const step = niceResidual * magnitude;
+  const max = Math.ceil((value * 1.08) / step) * step;
+  return { max, step };
+}
+
 function setMetaLine(meta) {
   document.getElementById("meta-line").textContent =
     `dataset=${meta.dataset} · nb=${meta.nb.toLocaleString()} · dim=${meta.dim} ` +
@@ -171,7 +187,8 @@ function renderBreakdownBar(canvasId, rows, opts) {
       maintainAspectRatio: false,
       scales: {
         x: { title: { display: true, text: opts.xLabel }, grid: { display: false } },
-        y: { title: { display: true, text: opts.yLabel }, grid: { color: COLOR_GRID }, beginAtZero: true },
+        y: { title: { display: true, text: opts.yLabel }, grid: { color: COLOR_GRID }, beginAtZero: true,
+             max: opts.yMax, ticks: { stepSize: opts.yStep } },
       },
       plugins: {
         legend: seriesKeys.length > 1
@@ -237,7 +254,7 @@ const QDR_QUANT_LABEL = { none: "Full precision", scalar: "Scalar quant" };
 // on top is the extra VACUUM COMPACT merge cost -- both numbers come from
 // the same compact-settle measurement, so the stack is a real decomposition
 // of one build's total time, not two builds side by side.
-function renderSerenedbBuildTimeStacked(chartId, tableId, rows) {
+function renderSerenedbBuildTimeStacked(chartId, tableId, rows, yMax, yStep) {
   const categories = rows.map((r) => r.quant);
 
   new Chart(document.getElementById(chartId), {
@@ -273,7 +290,8 @@ function renderSerenedbBuildTimeStacked(chartId, tableId, rows) {
       maintainAspectRatio: false,
       scales: {
         x: { stacked: true, title: { display: true, text: "Quantizer" }, grid: { display: false } },
-        y: { stacked: true, title: { display: true, text: "Build time (seconds)" }, grid: { color: COLOR_GRID }, beginAtZero: true },
+        y: { stacked: true, title: { display: true, text: "Build time (seconds)" }, grid: { color: COLOR_GRID }, beginAtZero: true,
+             max: yMax, ticks: { stepSize: yStep } },
       },
       plugins: {
         legend: { position: "top", align: "start", labels: { usePointStyle: true, boxWidth: 8 } },
@@ -306,7 +324,7 @@ function renderSerenedbBreakdown(chartId, tableId, rows, valueKey, yLabel, value
     rows.map((r) => [r.quant, SDB_SETTLE_LABEL[r.settle] || r.settle, fmtInt(r.nlist), fmt(r[valueKey])]));
 }
 
-function renderQdrantBreakdown(chartId, tableId, rows, valueKey, yLabel, valueHeader, fmt) {
+function renderQdrantBreakdown(chartId, tableId, rows, valueKey, yLabel, valueHeader, fmt, yMax, yStep) {
   renderBreakdownBar(chartId, rows, {
     catFn: (r) => `m=${r.m}, efc=${r.ef_construct}`,
     seriesFn: (r) => r.quant,
@@ -315,6 +333,8 @@ function renderQdrantBreakdown(chartId, tableId, rows, valueKey, yLabel, valueHe
     valueKey,
     xLabel: "HNSW (m, ef_construct)",
     yLabel,
+    yMax,
+    yStep,
   });
   renderTable(tableId, ["m", "ef_construct", "Quant", valueHeader],
     rows.map((r) => [r.m, r.ef_construct, QDR_QUANT_LABEL[r.quant] || r.quant, fmt(r[valueKey])]));
@@ -328,10 +348,19 @@ fetch("data/comparison.json")
     setMetaLine(data.meta);
     renderRecallQps(data.recall_qps);
 
+    // Shared y-axis scale (same max AND same gridline step) across both
+    // build-time panels, so equal values land on the same horizontal line in
+    // either chart -- matching ranges alone isn't enough if the two charts
+    // pick different tick steps, the gridlines still wouldn't line up.
+    const { max: buildTimeMax, step: buildTimeStep } = niceAxisScale(Math.max(
+      ...data.build_time.serenedb_by_quant.map((r) => r.index_build_s + r.compact_s),
+      ...data.build_time.qdrant_by_config.map((r) => r.build_s)));
+
     renderSerenedbBuildTimeStacked("chart-build-time-serenedb", "table-build-time-serenedb",
-      data.build_time.serenedb_by_quant);
+      data.build_time.serenedb_by_quant, buildTimeMax, buildTimeStep);
     renderQdrantBreakdown("chart-build-time-qdrant", "table-build-time-qdrant",
-      data.build_time.qdrant_by_config, "build_s", "Build time (seconds)", "Build (s)", (v) => v.toFixed(1));
+      data.build_time.qdrant_by_config, "build_s", "Build time (seconds)", "Build (s)", (v) => v.toFixed(1),
+      buildTimeMax, buildTimeStep);
 
     renderSerenedbBreakdown("chart-index-size-serenedb", "table-index-size-serenedb",
       data.index_size.serenedb_by_quant, "index_mb", "Index size (MB)", "Size (MB)", (v) => fmtInt(v));

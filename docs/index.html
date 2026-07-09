@@ -21,40 +21,23 @@
   <details class="caveats">
     <summary>How to read these charts</summary>
     <ul>
-      <li><strong>Different algorithms, different knobs.</strong> SereneDB is
-        IVF (+ optional scalar/product/RaBitQ quantization), Qdrant is HNSW.
-        The search-effort knob swept per engine is <code>nprobe</code> for
-        SereneDB and <code>hnsw_ef</code> for Qdrant — they aren't the same
-        unit, so compare the recall-vs-QPS curve, not points at equal effort.</li>
-      <li><strong>"Best per recall band."</strong> Each point/bar is the
-        highest-QPS configuration (across every quantization, cell count,
-        segment-merge policy, and effort knob measured) whose achieved
-        recall@10 falls in that band — ties broken by lower p50 latency. Bands
-        are 0.05-wide up to 0.95 recall, then 0.01-wide above it, since that's
-        where the two engines separate.</li>
-      <li><strong>QPS is closed-loop at 32 concurrent clients</strong> — each
-        connection fires its next query as soon as the previous one returns,
-        same protocol for both engines.</li>
-      <li><strong>Build time and index size are shown per engine, not
-        head-to-head.</strong> SereneDB and Qdrant build fundamentally
-        different structures (IVF cells vs. an HNSW graph) from different
-        knobs, so a single bar-for-bar comparison would imply an equivalence
-        that isn't there. Each engine gets its own panel instead.</li>
-      <li><strong>SereneDB panels are pinned at <code>nlist_factor=2</code></strong>
-        (6,325 IVF cells for 10M rows). RaBitQ was only swept at
-        <code>nlist_factor=1</code> in this run, so it doesn't appear here.</li>
-      <li><strong>The build-time panel's bar is a decomposition, not a
-        comparison.</strong> Each quantizer's bar stacks <code>CREATE
-        INDEX</code> time underneath the extra <code>VACUUM (COMPACT_TABLE)</code>
-        merge time on top — both numbers come from the same build (the
-        <code>compact</code> settle policy). The index-size panel separately
-        shows <code>compact</code> vs. <code>no-compact</code> per quantizer —
-        <code>no-compact</code> skips the background segment-merge after
-        loading, so it's smaller on disk but typically slower to search.</li>
-      <li><strong>SereneDB's index size includes the base-table columnstore
-        copy</strong> of the vectors (SereneDB indexes a table it also
-        stores; Qdrant's index is index-only) — keep that in mind when
-        eyeballing the two engines' panels side by side.</li>
+      <li><strong>Different algorithms, different knobs.</strong> SereneDB =
+        IVF (<code>nprobe</code>), Qdrant = HNSW (<code>hnsw_ef</code>) — not
+        the same unit, so compare the recall-vs-QPS curve, not points at
+        equal effort.</li>
+      <li><strong>"Best per band"</strong> = highest QPS at that recall@10
+        across every config measured, ties broken by lower p50. Bands are
+        0.05-wide up to 0.95 recall, then 0.01-wide above it.</li>
+      <li><strong>QPS is closed-loop at 32 concurrent clients</strong>, same
+        protocol for both engines.</li>
+      <li><strong>Build-time/index-size panels are per-engine, not
+        head-to-head</strong> (different structures and knobs). SereneDB is
+        pinned at <code>nlist_factor=2</code> (RaBitQ only ran at
+        <code>nlist_factor=1</code>, so it's absent here). The build-time bar
+        stacks <code>CREATE INDEX</code> under its
+        <code>VACUUM (COMPACT_TABLE)</code> merge from one build; index size
+        shows <code>compact</code> vs. <code>no-compact</code> and includes
+        the base-table columnstore copy (Qdrant's is index-only).</li>
     </ul>
   </details>
 
