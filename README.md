@@ -252,11 +252,13 @@ background. `--settle` controls how the harness handles that before timing queri
   value is recorded per run (`build_threads` column). This is why comparing engines
   at a fixed `nprobe` is only meaningful at equal segment counts — prefer the
   recall-vs-QPS curve.
-- **`index_disk_bytes` is not comparable across sources.** For `local` it is
-  measured from before `CREATE TABLE`, so it **includes the base-table columnstore
-  copy** of the vectors; a view-backed index has no local base table, so its
-  `index_disk_bytes` is just the index structures. Compare disk only within the same
-  source kind.
+- **`index_disk_bytes` is index-only**, read directly from the storage engine's
+  own accounting (`sdb_metrics`'s `index_size`, keyed by the index's relation
+  id) rather than a datadir-size delta — it does *not* include the base
+  table's columnstore copy, WAL, or catalog bytes, so it's comparable across
+  `local` and view-backed sources alike. `datadir_bytes` (the whole datadir,
+  still a directory-size read) is reported alongside it for anyone who wants
+  the full-footprint number instead.
 - **Cleanup** is automatic: each run kills its serened and removes scratch
   datadirs. `build_index.py` intentionally leaves serened running — stop it with
   the printed `kill <pid>` or `query_index.py --stop`.
@@ -309,3 +311,10 @@ python compare.py --dataset t2i --data-dir <t2i> --gt-file <t2i>/text2image-10M 
   resident footprint but dominated by heap sizing, not index size.
 - **QPS is concurrent** across `--clients` threads (each a separate connection).
 - Synthetic data is unrepresentative (IVF needs cluster structure) — use real T2I.
+
+## License
+
+This repository's own code is licensed under the Apache License, Version 2.0
+(see `LICENSE`). The benchmark results in `results/` and `docs/` are derived
+from the Yandex Text-to-Image-1B dataset (CC BY 4.0) via big-ann-benchmarks
+(MIT) — see `NOTICE` for full attribution.

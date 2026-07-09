@@ -10,107 +10,107 @@
     "serenedb": [
       {
         "band": "0.55-0.60",
-        "recall": 0.5518,
-        "qps": 3890.4,
-        "p50_ms": 6.612,
-        "p95_ms": 13.902,
-        "config": "pq/nlist=3162/settle=compact/np=16/rr=2"
+        "recall": 0.5889,
+        "qps": 3965.1,
+        "p50_ms": 6.73,
+        "p95_ms": 13.647,
+        "config": "pq/nlist=3162/settle=compact/np=32/rr=2"
       },
       {
         "band": "0.60-0.65",
-        "recall": 0.6044,
-        "qps": 3814.6,
-        "p50_ms": 6.918,
-        "p95_ms": 13.803,
-        "config": "pq/nlist=6325/settle=compact/np=32/rr=2"
+        "recall": 0.619,
+        "qps": 3805.0,
+        "p50_ms": 6.993,
+        "p95_ms": 13.572,
+        "config": "pq/nlist=6325/settle=compact/np=63/rr=2"
       },
       {
         "band": "0.65-0.70",
-        "recall": 0.6628,
-        "qps": 3807.8,
-        "p50_ms": 6.918,
-        "p95_ms": 14.545,
+        "recall": 0.6797,
+        "qps": 3994.9,
+        "p50_ms": 6.549,
+        "p95_ms": 13.077,
         "config": "pq/nlist=3162/settle=compact/np=16/rr=4"
       },
       {
         "band": "0.70-0.75",
-        "recall": 0.7094,
-        "qps": 3753.1,
-        "p50_ms": 7.226,
-        "p95_ms": 13.438,
+        "recall": 0.7196,
+        "qps": 3829.5,
+        "p50_ms": 6.66,
+        "p95_ms": 13.641,
         "config": "pq/nlist=3162/settle=compact/np=32/rr=4"
       },
       {
         "band": "0.75-0.80",
-        "recall": 0.7978,
-        "qps": 3693.9,
-        "p50_ms": 7.182,
-        "p95_ms": 13.76,
-        "config": "pq/nlist=6325/settle=compact/np=32/rr=8"
+        "recall": 0.7527,
+        "qps": 3837.4,
+        "p50_ms": 6.812,
+        "p95_ms": 13.093,
+        "config": "pq/nlist=3162/settle=compact/np=16/rr=8"
       },
       {
         "band": "0.80-0.85",
-        "recall": 0.8213,
-        "qps": 3867.7,
-        "p50_ms": 7.102,
-        "p95_ms": 12.292,
-        "config": "sq8/nlist=3162/settle=compact/np=16/rr=4"
+        "recall": 0.8275,
+        "qps": 3818.2,
+        "p50_ms": 6.899,
+        "p95_ms": 12.988,
+        "config": "sq8/nlist=3162/settle=compact/np=16/rr=2"
       },
       {
         "band": "0.85-0.90",
-        "recall": 0.8705,
-        "qps": 3724.8,
-        "p50_ms": 6.977,
-        "p95_ms": 12.992,
+        "recall": 0.8663,
+        "qps": 3730.7,
+        "p50_ms": 6.948,
+        "p95_ms": 13.461,
         "config": "sq8/nlist=6325/settle=compact/np=32/rr=2"
       },
       {
         "band": "0.90-0.95",
-        "recall": 0.9059,
-        "qps": 3610.2,
-        "p50_ms": 7.108,
-        "p95_ms": 13.522,
-        "config": "sq8/nlist=12649/settle=compact/np=63/rr=2"
+        "recall": 0.9077,
+        "qps": 3731.9,
+        "p50_ms": 7.034,
+        "p95_ms": 13.757,
+        "config": "sq8/nlist=25298/settle=compact/np=126/rr=0"
       },
       {
         "band": "0.95-0.96",
-        "recall": 0.9539,
-        "qps": 2454.9,
-        "p50_ms": 10.591,
-        "p95_ms": 17.053,
-        "config": "sq4/nlist=25298/settle=compact/np=253/rr=16"
+        "recall": 0.9506,
+        "qps": 3345.8,
+        "p50_ms": 8.233,
+        "p95_ms": 13.059,
+        "config": "sq8/nlist=12649/settle=compact/np=126/rr=4"
       },
       {
         "band": "0.96-0.97",
-        "recall": 0.9661,
-        "qps": 3153.2,
-        "p50_ms": 8.682,
-        "p95_ms": 13.673,
-        "config": "sq8/nlist=25298/settle=compact/np=253/rr=2"
+        "recall": 0.9653,
+        "qps": 3400.8,
+        "p50_ms": 8.116,
+        "p95_ms": 13.112,
+        "config": "sq8/nlist=25298/settle=compact/np=253/rr=4"
       },
       {
         "band": "0.97-0.98",
-        "recall": 0.9775,
-        "qps": 2171.4,
-        "p50_ms": 12.45,
-        "p95_ms": 18.333,
+        "recall": 0.9767,
+        "qps": 2310.0,
+        "p50_ms": 12.325,
+        "p95_ms": 17.937,
         "config": "sq8/nlist=12649/settle=compact/np=253/rr=4"
       },
       {
         "band": "0.98-0.99",
-        "recall": 0.9864,
-        "qps": 2119.8,
-        "p50_ms": 12.675,
-        "p95_ms": 19.003,
+        "recall": 0.9847,
+        "qps": 2273.7,
+        "p50_ms": 12.05,
+        "p95_ms": 17.888,
         "config": "sq8/nlist=25298/settle=compact/np=506/rr=2"
       },
       {
         "band": "0.99-1.00",
-        "recall": 0.9903,
-        "qps": 1293.8,
-        "p50_ms": 22.139,
-        "p95_ms": 29.72,
-        "config": "sq8/nlist=12649/settle=compact/np=506/rr=2"
+        "recall": 0.9939,
+        "qps": 1275.7,
+        "p50_ms": 22.372,
+        "p95_ms": 31.358,
+        "config": "sq8/nlist=25298/settle=compact/np=1012/rr=2"
       }
     ],
     "qdrant": [
@@ -224,39 +224,15 @@
     "serenedb_by_quant": [
       {
         "quant": "sq8",
-        "settle": "compact",
         "nlist": 6325,
-        "build_s": 378.4
-      },
-      {
-        "quant": "sq8",
-        "settle": "no-compact",
-        "nlist": 6325,
-        "build_s": 161.1
-      },
-      {
-        "quant": "sq4",
-        "settle": "compact",
-        "nlist": 6325,
-        "build_s": 375.2
-      },
-      {
-        "quant": "sq4",
-        "settle": "no-compact",
-        "nlist": 6325,
-        "build_s": 161.6
+        "index_build_s": 147.3,
+        "compact_s": 210.9
       },
       {
         "quant": "pq",
-        "settle": "compact",
         "nlist": 6325,
-        "build_s": 467.4
-      },
-      {
-        "quant": "pq",
-        "settle": "no-compact",
-        "nlist": 6325,
-        "build_s": 249.4
+        "index_build_s": 207.1,
+        "compact_s": 233.1
       }
     ],
     "qdrant_by_config": [
@@ -340,7 +316,7 @@
         "quant": "sq8",
         "settle": "compact",
         "nlist": 6325,
-        "index_mb": 25453.5
+        "index_mb": 9206.0
       },
       {
         "quant": "sq8",
@@ -349,22 +325,10 @@
         "index_mb": 16247.6
       },
       {
-        "quant": "sq4",
-        "settle": "compact",
-        "nlist": 6325,
-        "index_mb": 23453.5
-      },
-      {
-        "quant": "sq4",
-        "settle": "no-compact",
-        "nlist": 6325,
-        "index_mb": 15247.6
-      },
-      {
         "quant": "pq",
         "settle": "compact",
         "nlist": 6325,
-        "index_mb": 22504.1
+        "index_mb": 7711.0
       },
       {
         "quant": "pq",

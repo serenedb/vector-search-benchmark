@@ -116,9 +116,17 @@ section.chart-section p.desc {
   max-height: 340px;
 }
 
+/* Panels within a row (build-time, index-size) share row tracks via subgrid,
+   so the shorter description doesn't leave its chart starting higher than
+   its neighbor's -- h3 / desc / chart-card / details all align across
+   columns. The chart-card itself gets a fixed height (rather than relying
+   on both columns happening to compute the same aspect-ratio height) so the
+   two charts are the same size outright; app.js sets
+   `maintainAspectRatio: false` on these so Chart.js fills it exactly. */
 .panel-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto auto;
   gap: 28px;
 }
 
@@ -126,6 +134,12 @@ section.chart-section p.desc {
   .panel-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.panel-grid > div {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 4;
 }
 
 .panel-grid > div h3 {
@@ -136,6 +150,18 @@ section.chart-section p.desc {
 .panel-grid > div p.desc {
   font-size: 0.85rem;
   margin: 0 0 12px;
+}
+
+.panel-grid .chart-card {
+  height: 460px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-grid .chart-card canvas {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
 }
 
 details.data-table {

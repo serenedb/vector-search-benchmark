@@ -164,6 +164,11 @@ function renderBreakdownBar(canvasId, rows, opts) {
     data: { labels: categories, datasets },
     options: {
       responsive: true,
+      // The chart-card gets a fixed CSS height so paired panels (see
+      // .panel-grid in style.css) render at the exact same size --
+      // maintainAspectRatio would otherwise override that with a
+      // width-derived height.
+      maintainAspectRatio: false,
       scales: {
         x: { title: { display: true, text: opts.xLabel }, grid: { display: false } },
         y: { title: { display: true, text: opts.yLabel }, grid: { color: COLOR_GRID }, beginAtZero: true },
@@ -227,6 +232,66 @@ function renderTable(tableId, headers, rows) {
 const SDB_SETTLE_LABEL = { compact: "Compact", "no-compact": "No-compact" };
 const QDR_QUANT_LABEL = { none: "Full precision", scalar: "Scalar quant" };
 
+// One stacked bar per quantizer: the solid base segment is the index build
+// itself (CREATE INDEX + VACUUM REFRESH), the light/dashed segment stacked
+// on top is the extra VACUUM COMPACT merge cost -- both numbers come from
+// the same compact-settle measurement, so the stack is a real decomposition
+// of one build's total time, not two builds side by side.
+function renderSerenedbBuildTimeStacked(chartId, tableId, rows) {
+  const categories = rows.map((r) => r.quant);
+
+  new Chart(document.getElementById(chartId), {
+    type: "bar",
+    data: {
+      labels: categories,
+      datasets: [
+        {
+          label: "Index build (CREATE INDEX)",
+          data: rows.map((r) => r.index_build_s),
+          backgroundColor: COLOR_SDB,
+          borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 },
+          maxBarThickness: 40,
+          categoryPercentage: 0.5,
+          barPercentage: 0.9,
+        },
+        {
+          label: "Compact merge (VACUUM COMPACT)",
+          data: rows.map((r) => r.compact_s),
+          backgroundColor: COLOR_SDB_LIGHT,
+          borderColor: COLOR_SDB,
+          borderWidth: 2,
+          borderDash: [4, 3],
+          borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 },
+          maxBarThickness: 40,
+          categoryPercentage: 0.5,
+          barPercentage: 0.9,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, title: { display: true, text: "Quantizer" }, grid: { display: false } },
+        y: { stacked: true, title: { display: true, text: "Build time (seconds)" }, grid: { color: COLOR_GRID }, beginAtZero: true },
+      },
+      plugins: {
+        legend: { position: "top", align: "start", labels: { usePointStyle: true, boxWidth: 8 } },
+        tooltip: {
+          callbacks: {
+            label: (item) => `${item.dataset.label}: ${item.formattedValue}s`,
+            footer: (items) => `Total: ${items.reduce((sum, i) => sum + i.parsed.y, 0).toFixed(1)}s`,
+          },
+        },
+      },
+    },
+  });
+
+  renderTable(tableId, ["Quantizer", "nlist", "Index build (s)", "Compact merge (s)", "Total (s)"],
+    rows.map((r) => [r.quant, fmtInt(r.nlist), r.index_build_s.toFixed(1), r.compact_s.toFixed(1),
+                     (r.index_build_s + r.compact_s).toFixed(1)]));
+}
+
 function renderSerenedbBreakdown(chartId, tableId, rows, valueKey, yLabel, valueHeader, fmt) {
   renderBreakdownBar(chartId, rows, {
     catFn: (r) => r.quant,
@@ -263,8 +328,8 @@ fetch("data/comparison.json")
     setMetaLine(data.meta);
     renderRecallQps(data.recall_qps);
 
-    renderSerenedbBreakdown("chart-build-time-serenedb", "table-build-time-serenedb",
-      data.build_time.serenedb_by_quant, "build_s", "Build time (seconds)", "Build (s)", (v) => v.toFixed(1));
+    renderSerenedbBuildTimeStacked("chart-build-time-serenedb", "table-build-time-serenedb",
+      data.build_time.serenedb_by_quant);
     renderQdrantBreakdown("chart-build-time-qdrant", "table-build-time-qdrant",
       data.build_time.qdrant_by_config, "build_s", "Build time (seconds)", "Build (s)", (v) => v.toFixed(1));
 

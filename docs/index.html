@@ -41,12 +41,16 @@
         knobs, so a single bar-for-bar comparison would imply an equivalence
         that isn't there. Each engine gets its own panel instead.</li>
       <li><strong>SereneDB panels are pinned at <code>nlist_factor=2</code></strong>
-        (6,325 IVF cells for 10M rows) and show <code>compact</code> vs.
-        <code>no-compact</code> per quantizer — <code>no-compact</code> skips
-        the background segment-merge after loading, so it's faster to build
-        and smaller on disk but typically slower to search.
-        RaBitQ was only swept at <code>nlist_factor=1</code> in this run, so
-        it doesn't appear here.</li>
+        (6,325 IVF cells for 10M rows). RaBitQ was only swept at
+        <code>nlist_factor=1</code> in this run, so it doesn't appear here.</li>
+      <li><strong>The build-time panel's bar is a decomposition, not a
+        comparison.</strong> Each quantizer's bar stacks <code>CREATE
+        INDEX</code> time underneath the extra <code>VACUUM (COMPACT_TABLE)</code>
+        merge time on top — both numbers come from the same build (the
+        <code>compact</code> settle policy). The index-size panel separately
+        shows <code>compact</code> vs. <code>no-compact</code> per quantizer —
+        <code>no-compact</code> skips the background segment-merge after
+        loading, so it's smaller on disk but typically slower to search.</li>
       <li><strong>SereneDB's index size includes the base-table columnstore
         copy</strong> of the vectors (SereneDB indexes a table it also
         stores; Qdrant's index is index-only) — keep that in mind when
@@ -82,17 +86,17 @@
       <div>
         <h3>SereneDB — by quantizer</h3>
         <p class="desc">
-          Load + <code>CREATE INDEX</code>, plus the final
-          <code>VACUUM (COMPACT_TABLE)</code> merge for the
-          <code>compact</code> series. <code>nlist_factor=2</code> (6,325 cells).
+          <code>CREATE INDEX</code> time, with the final
+          <code>VACUUM (COMPACT_TABLE)</code> merge stacked on top.
+          <code>nlist_factor=2</code> (6,325 cells).
         </p>
         <div class="chart-card">
-          <canvas id="chart-build-time-serenedb" role="img" aria-label="Bar chart of SereneDB build time in seconds by quantizer, compact versus no-compact"></canvas>
+          <canvas id="chart-build-time-serenedb" role="img" aria-label="Stacked bar chart of SereneDB build time in seconds by quantizer: index build time with compact merge time stacked on top"></canvas>
         </div>
         <details class="data-table">
           <summary>Show data table</summary>
           <table id="table-build-time-serenedb">
-            <caption>SereneDB build time (seconds) by quantizer and segment-merge policy.</caption>
+            <caption>SereneDB build time (seconds) by quantizer: index build + compact merge.</caption>
           </table>
         </details>
       </div>
@@ -121,7 +125,7 @@
     </p>
     <div class="panel-grid">
       <div>
-        <h3>SereneDB — by quantizer</h3>
+        <h3>SereneDB index size</h3>
         <p class="desc">
           Includes the base-table columnstore copy of the vectors.
           <code>nlist_factor=2</code> (6,325 cells).
@@ -137,7 +141,7 @@
         </details>
       </div>
       <div>
-        <h3>Qdrant — by (m, ef_construct)</h3>
+        <h3>Qdrant index size</h3>
         <p class="desc">
           Index-only footprint; full precision vs. scalar quantization.
         </p>
@@ -160,6 +164,12 @@
     <code>results/qdrant/qdrant_tuning_all.csv</code>. See the
     <a href="https://github.com/serenedb/vector-search-benchmark">repo README</a>
     for the full benchmark methodology.
+    <p>
+      Benchmark queries run against the
+      <a href="https://research.yandex.com/datasets/text-to-image-dataset-for-billion-scale-similarity-search">Yandex Text-to-Image-1B dataset</a>,
+      licensed
+      <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
+    </p>
   </footer>
 </div>
 

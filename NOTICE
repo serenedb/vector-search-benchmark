@@ -1,0 +1,25 @@
+This repository's own code is licensed under the Apache License, Version 2.0
+(see LICENSE). This file attributes third-party data and tools used to
+produce the benchmark results in results/ and docs/.
+
+Yandex Text-to-Image-1B dataset
+--------------------------------
+Source: https://research.yandex.com/datasets/text-to-image-dataset-for-billion-scale-similarity-search
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+         https://creativecommons.org/licenses/by/4.0/
+
+This repository does not redistribute the dataset itself -- README.md points
+users to big-ann-benchmarks to download it directly. The contents of
+results/ and docs/ are derived benchmark statistics (recall, QPS, latency,
+build time, index size) computed by running SereneDB/Qdrant/Elasticsearch
+queries against indexes built from this dataset; no changes were made to the
+dataset itself.
+
+big-ann-benchmarks
+------------------
+Source: https://github.com/harsha-simhadri/big-ann-benchmarks
+License: MIT License, Copyright (c) 2021 Martin Aumüller
+
+Used as the reference tool for downloading and formatting the Text-to-Image
+dataset (see README.md's "Get the dataset" section). No code from this
+project is vendored in this repository.

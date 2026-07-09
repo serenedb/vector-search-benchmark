@@ -112,9 +112,9 @@ SERENEDB_BUILD_NLIST_FACTOR = "2"
 
 
 def serenedb_build_size_by_quant(rows, nlist_factor):
-    """One row per (quant, settle) at a fixed nlist_factor -- build_s/index_mb
-    are constant across nprobe/rerank_factor within a (quant, settle) build,
-    so any matching row carries the right numbers."""
+    """One row per (quant, settle) at a fixed nlist_factor -- fields are
+    constant across nprobe/rerank_factor within a (quant, settle) build, so
+    any matching row carries the right numbers."""
     seen = {}
     for r in rows:
         if r["nlist_factor"] != nlist_factor:
@@ -126,6 +126,8 @@ def serenedb_build_size_by_quant(rows, nlist_factor):
             "quant": r["quant"],
             "settle": r["settle"],
             "nlist": int(r["nlist"]),
+            "index_build_s": round(float(r["index_build_s"]), 1),
+            "compact_s": round(float(r["compact_s"]), 1),
             "build_s": round(serenedb_build_cost(r), 1),
             "index_mb": round(float(r["index_disk_bytes"]) / 1e6, 1),
         }
@@ -170,6 +172,11 @@ def main():
 
     sdb_build_size = serenedb_build_size_by_quant(sdb_rows, SERENEDB_BUILD_NLIST_FACTOR)
     qdr_build_size = qdrant_build_size_by_config(qdr_rows)
+    # Build-time panel shows one stacked bar per quantizer (index build +
+    # compact merge) -- both numbers come from the same compact-settle
+    # measurement, so it's a single coherent decomposition, not a
+    # settle-policy comparison (that's what the index-size panel is for).
+    sdb_build_time = [w for w in sdb_build_size if w["settle"] == "compact"]
 
     out = {
         "meta": meta,
@@ -178,7 +185,7 @@ def main():
             "qdrant": project(qdr_all, "band", "recall", "qps", "p50_ms", "p95_ms", "config"),
         },
         "build_time": {
-            "serenedb_by_quant": project(sdb_build_size, "quant", "settle", "nlist", "build_s"),
+            "serenedb_by_quant": project(sdb_build_time, "quant", "nlist", "index_build_s", "compact_s"),
             "qdrant_by_config": project(qdr_build_size, "m", "ef_construct", "quant", "build_s"),
         },
         "index_size": {

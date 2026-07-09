@@ -100,5 +100,17 @@ class SereneDBEngine(Engine):
         return _SereneSession(self.server.port, self.index, self._dim, search_param,
                               rerank_factor=self.rerank_factor)
 
+    def disk_bytes(self):
+        # Index-only size from the storage engine's own accounting, not a
+        # datadir directory-size read (Engine.disk_bytes' default) -- the
+        # datadir here also holds the base table's columnstore copy.
+        cur = self.server.connect().cursor()
+        try:
+            return sdb.scalar(
+                cur, f"SELECT value FROM sdb_metrics "
+                     f"WHERE metric = 'index_size' AND relation_id = '{self.index}'::regclass::BIGINT")
+        finally:
+            cur.close()
+
     def stop(self):
         self.server.stop()

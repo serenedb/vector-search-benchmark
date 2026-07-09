@@ -30,6 +30,16 @@ def _index_with_opts(settle):
     return None
 
 
+def _index_size_bytes(cur, index):
+    """Index-only on-disk size in bytes, straight from the storage engine's
+    own accounting (sdb_metrics 'index_size'), not a datadir-size delta --
+    so it never includes the base-table columnstore copy, WAL, or catalog
+    bytes that a whole-datadir diff would pick up."""
+    return float(sdb.scalar(
+        cur, f"SELECT value FROM sdb_metrics "
+             f"WHERE metric = 'index_size' AND relation_id = '{index}'::regclass::BIGINT"))
+
+
 def _wait_quiescent(server, poll=2.0, stable_needed=3, timeout=3600, log=print):
     """Poll the datadir size until it stops changing (background work settled)."""
     last, stable, start = -1, 0, time.perf_counter()
@@ -81,7 +91,6 @@ def build_local(server, ds, scenario, *, nlist=None, nlist_factor=None,
                 workdir=None, settle="compact", log=print):
     dim = ds.dim
     cur = server.connect().cursor()
-    baseline_bytes = server.datadir_bytes()
     sdb.execute(cur, f"DROP TABLE IF EXISTS {table} CASCADE")
 
     _phase(server, "build")
@@ -115,6 +124,7 @@ def build_local(server, ds, scenario, *, nlist=None, nlist_factor=None,
     ram_build = _end_phase(server, "build")
 
     disk_after = server.datadir_bytes()                  # measured after settle -> stable size
+    index_disk_bytes = _index_size_bytes(cur, index)
     rows = sdb.scalar(cur, f"SELECT count(*) FROM {index}")
     cur.close()
     return {
@@ -126,7 +136,7 @@ def build_local(server, ds, scenario, *, nlist=None, nlist_factor=None,
         "compact_s": compact_s,
         "build_total_s": load_s + index_s,
         "datadir_bytes": disk_after,
-        "index_disk_bytes": disk_after - baseline_bytes,
+        "index_disk_bytes": index_disk_bytes,
         "ram_peak_build_mb": ram_build,
         # VACUUM (REFRESH_TABLE) consolidates the local index to a single segment,
         # so it behaves like a single-threaded (single-segment) build for nprobe.
@@ -140,7 +150,6 @@ def build_remote(server, ds, scenario, remote, *, nlist=None, nlist_factor=None,
                  settle="compact", build_threads=1, log=print):
     dim = ds.dim
     cur = server.connect().cursor()
-    baseline_bytes = server.datadir_bytes()
 
     log(f"  [{scenario}] preparing remote source ({remote.kind}) ...")
     t_prep = time.perf_counter()
@@ -177,6 +186,7 @@ def build_remote(server, ds, scenario, remote, *, nlist=None, nlist_factor=None,
     ram_build = _end_phase(server, "build")
 
     disk_after = server.datadir_bytes()
+    index_disk_bytes = _index_size_bytes(cur, index)
     rows = sdb.scalar(cur, f"SELECT count(*) FROM {index}")
     cur.close()
     return {
@@ -190,7 +200,7 @@ def build_remote(server, ds, scenario, remote, *, nlist=None, nlist_factor=None,
         "compact_s": compact_s,
         "build_total_s": index_s,
         "datadir_bytes": disk_after,
-        "index_disk_bytes": disk_after - baseline_bytes,
+        "index_disk_bytes": index_disk_bytes,
         "ram_peak_build_mb": ram_build,
         "build_threads": build_threads,
     }
